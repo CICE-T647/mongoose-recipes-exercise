@@ -46,6 +46,6 @@ const recipeSchema = new Schema({
     default: true
   }
 });
-userSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único " });
+recipeSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único " });
 
 module.exports = mongoose.model("Recipe", recipeSchema);
