@@ -6,10 +6,21 @@ const mongoose = require("mongoose");
 const SERVER_PORT = process.env.SERVER_PORT || 5000;
 const DB_PORT = process.env.DB_PORT;
 
+const {
+  getRecipes,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe
+} = require("./routes");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//app.use("/users", require("./routes/user"));
+//routes
+app.use("/getrecipes", getRecipes);
+app.use("/createrecipe", createRecipe);
+app.use("/updaterecipe", updateRecipe);
+app.use("/deleterecipe", deleteRecipe);
 
 mongoose
   .connect(`mongodb://localhost:${DB_PORT}/recipes`, {
