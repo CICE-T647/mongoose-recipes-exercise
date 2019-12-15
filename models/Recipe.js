@@ -18,7 +18,13 @@ const recipesSchema = new Schema({
         }
     },
     ingredients: {
-        type: Array
+        type: Array,
+        validate:{
+            validator: function(array){
+                return array.length > 1;
+            },
+           message: array => `Una receta deberia contener al menos 2 ingredientes`
+        } 
     },
     cuisine:{
         type: String,
@@ -37,10 +43,17 @@ const recipesSchema = new Schema({
     },
     duration:{
         type: Number,
-        min: 0
+        min: [1,"La receta deberia tener una mayor duración!"],
+        validate: {
+                validator: function(v) {
+                return /^[+-]?\d+(\.\d+)?$/.test(v);
+            },
+            message: time => `${time.value} no es n numero valido!`
+        }
     },
     creator:{
-        type: String
+        type: String,
+        default: "Anonimo"
     },
     created:{
         type:Date,
@@ -48,6 +61,10 @@ const recipesSchema = new Schema({
     },
     state:{
         type:Boolean,
+        enum:{
+            values:[true,false],
+            message: "{VALUE} no es un estado valido"
+        },
         default: true  
     }
 });
