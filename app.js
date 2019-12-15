@@ -9,7 +9,7 @@ const DB_PORT = process.env.DB_PORT;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/users", require("./routes/user"));
+//app.use("/users", require("./routes/user"));
 
 mongoose
   .connect(`mongodb://localhost:${DB_PORT}/recipes`, {
