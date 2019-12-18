@@ -1,0 +1,28 @@
+{
+  "name": "mongoose-recipes-exercise",
+  "version": "1.0.0",
+  "description": "Para tener algo de información en la base de datos, tendrás que importar el json `./recipes.json` en una colección llamada __recipes__.",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.1",
+    "mongoose-unique-validator": "^2.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jorsancig/mongoose-recipes-exercise.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jorsancig/mongoose-recipes-exercise/issues"
+  },
+  "homepage": "https://github.com/jorsancig/mongoose-recipes-exercise#readme"
+}
