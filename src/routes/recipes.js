@@ -16,114 +16,122 @@ const recipeItems = [
     "dishType"
 ];
 
-router.post("/create", (req, res) => {
-    const keys = Object.keys(req.body);
-    const itemsExcluded = [];
+const checkHttpParamsOnlyTitle = params => {
+    const keys = Object.keys(params);
 
+    // Check title
+    if (keys.length !== 1 && !keys.includes("title"))
+        throw "Bad Parameters: title is only one required";
+};
+
+const checkHttpParams = params => {
+    const itemsExcluded = [];
+    const keys = Object.keys(params);
+
+    // Check title
+    if (keys.length < 1 || !keys.includes("title"))
+        throw "Bad Parameters: title is required";
+
+    // Check valid params
     keys.map(item => {
         if (!recipeItems.includes(item)) itemsExcluded.push(item);
     });
-
     if (itemsExcluded.length > 0)
-        res.status(422).json({
-            message: `Parameters not supported: ${itemsExcluded}`
-        });
+        throw `Parameters not supported: ${itemsExcluded}`;
+};
 
-    mongodbManage
-        .mongodbNewRecipe(req.body)
-        .then(() => res.status(200).json({ message: "Recipe created" }))
-        .catch(err => {
-            if (err.name === "ValidationError") {
-                res.status(422).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+router.post("/create", (req, res) => {
+    try {
+        checkHttpParams(req.body);
+        mongodbManage
+            .mongodbNewRecipe(req.body)
+            .then(() => res.status(200).json({ message: "Recipe created" }))
+            .catch(err => {
+                if (err.name === "ValidationError") {
+                    res.status(422).json({ message: err.message });
+                } else {
+                    res.status(500).json({ message: err.message });
+                }
+            });
+    } catch (error) {
+        res.status(422).json({ message: error });
+    }
 });
 
 router.post("/update", (req, res) => {
-    const { title } = req.body;
-    const keys = Object.keys(req.body);
-    const itemsExcluded = [];
+    try {
+        checkHttpParams(req.body);
 
-    keys.map(item => {
-        if (!recipeItems.includes(item)) itemsExcluded.push(item);
-    });
+        const { title } = req.body;
+        const search = {
+            title: title
+        };
 
-    if (itemsExcluded.length > 0)
-        res.status(422).json({
-            message: `Parameters not supported: ${itemsExcluded}`
-        });
-
-    if (!keys.includes("title"))
-        res.status(422).json({ message: `Bad Parameters: title is required` });
-
-    const search = {
-        title: title
-    };
-
-    mongodbManage
-        .mongodbUpdateRecipe(search, req.body)
-        .then(() => res.status(200).json({ message: "Recipe updated" }))
-        .catch(err => {
-            if (err.name === "ValidationError") {
-                res.status(422).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+        mongodbManage
+            .mongodbUpdateRecipe(search, req.body)
+            .then(() => res.status(200).json({ message: "Recipe updated" }))
+            .catch(err => {
+                if (err.name === "ValidationError") {
+                    res.status(422).json({ message: err.message });
+                } else {
+                    res.status(500).json({ message: err.message });
+                }
+            });
+    } catch (error) {
+        res.status(422).json({ message: error });
+    }
 });
 
 router.get("/search", (req, res) => {
-    const { title } = req.query;
-    const keys = Object.keys(req.query);
+    try {
+        checkHttpParamsOnlyTitle(req.query);
 
-    if (!keys.includes("title") && keys.length > 1)
-        res.status(422).json({
-            message: `Bad Parameters: title is only one required`
-        });
+        const { title } = req.query;
+        const search = {
+            title: title
+        };
 
-    const search = {
-        title: title
-    };
-
-    mongodbManage
-        .mongodbSearchRecipe(search)
-        .then(search =>
-            res.status(200).json({ message: "Recipe Founded", content: search })
-        )
-        .catch(err => {
-            if (err.name === "ValidationError") {
-                res.status(422).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+        mongodbManage
+            .mongodbSearchRecipe(search)
+            .then(search =>
+                res
+                    .status(200)
+                    .json({ message: "Recipe found", content: search })
+            )
+            .catch(err => {
+                if (err.name === "ValidationError") {
+                    res.status(422).json({ message: err.message });
+                } else {
+                    res.status(500).json({ message: err.message });
+                }
+            });
+    } catch (error) {
+        res.status(422).json({ message: error });
+    }
 });
 
 router.delete("/delete", (req, res) => {
-    const { title } = req.query;
-    const keys = Object.keys(req.query);
+    try {
+        checkHttpParamsOnlyTitle(req.query);
 
-    if (!keys.includes("title") && keys.length > 1)
-        res.status(422).json({
-            message: `Bad Parameters: title is only one required`
-        });
+        const { title } = req.query;
+        const search = {
+            title: title
+        };
 
-    const search = {
-        title: title
-    };
-
-    mongodbManage
-        .mongodbDeleteRecipe(search)
-        .then(() => res.status(200).json({ message: "Recipe Deleted" }))
-        .catch(err => {
-            if (err.name === "ValidationError") {
-                res.status(422).json({ message: err.message });
-            } else {
-                res.status(500).json({ message: err.message });
-            }
-        });
+        mongodbManage
+            .mongodbDeleteRecipe(search)
+            .then(() => res.status(200).json({ message: "Recipe Deleted" }))
+            .catch(err => {
+                if (err.name === "ValidationError") {
+                    res.status(422).json({ message: err.message });
+                } else {
+                    res.status(500).json({ message: err.message });
+                }
+            });
+    } catch (error) {
+        res.status(422).json({ message: error });
+    }
 });
 
 module.exports = router;

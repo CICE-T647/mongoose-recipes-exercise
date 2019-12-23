@@ -1,10 +1,19 @@
+require("dotenv").config();
 const express = require("express");
 const bp = require("body-parser");
+const fs = require("fs");
+const recipes = require("./controllers/recipesMongoDB");
 
-require("dotenv").config();
+const loadRecipes = async () => {
+    const rawdata = fs.readFileSync("../recipes.json");
+    const student = JSON.parse(rawdata);
+    await recipes.mongodbLoadRecipes(student);
+};
+
+// This loadRecipes will not be a stopper to start Express Server
+loadRecipes();
 
 const PORT = process.env.SERVER_PORT;
-
 const app = express();
 
 app.use(bp.urlencoded({ extended: true }));
